@@ -1,0 +1,375 @@
+<pc-dialog type="DELETION" [title]="soDeletionDialog_title" [items]="soDeletionDialog_items" [suggestion]="soDeletionDialog_suggestion"
+  [isDisplayItems]="soDeletionDialog_isDisplayItems" [display]="soDeletionDialog_isDisplay" (onClickYes)="_doDelete($event)"
+  (onClickNo)="_doCloseDialog($event)" [locale]="locale">
+</pc-dialog>
+<p-messages class="pc-messages" id="topTitle" [(value)]="messages" *ngIf="messages?.length > 0"></p-messages>
+<div id="topTitle">
+  <loading-field [loading]="isLoading"></loading-field>
+</div>
+<p-blockUI [blocked]="blocked" [target]="mainContent">
+  <p-progressSpinner class="pc-progressSpinner"></p-progressSpinner>
+</p-blockUI>
+<div style="position: relative; margin-left: auto; margin-right: auto; width: 68.571em;">
+  <p-growl class="pc-success-growl" [(value)]="successMessages" *ngIf="successMessages?.length > 0"></p-growl>
+</div>
+
+<!-- <div class="ui-g" style="padding: 0 64px">
+    <div class="ui-g-12 ui-md-12">
+        <h2 class="cust-pc-f-title" i18n="@@TRAIN_SCHEDULE.TITLE.TRAIN_STATION_DETAILS">TRAIN STATION DETAILS</h2>
+    </div>
+
+    <div class="ui-g-12 ui-md-12" style="padding-right: 0px">
+                  
+               <p-dataTable #table class="pc-datatable" [value]="soDataList" dataKey="id" [paginator]="true" [rows]="10" [responsive]="true"
+                    [rowsPerPageOptions]="[5,10,20]">
+                    <p-column [style]="{'width':'6%'}"  selectionMode="multiple"></p-column>
+                        <p-column field="depoOpr" i18n-header="@@SO.TABLE.HEADER.DEPOT_OPERATOR" header="Depot Operator" [style]="{'width':'18%'}"></p-column>
+                        <p-column field="orgCode" i18n-header="@@SO.TABLE.HEADER.DEPOT_ORG_CODE" header="Organization Code" [style]="{'width':'18%'}"></p-column>
+                
+                </p-dataTable>
+    </div>
+</div> -->
+
+<!-- -- st -->
+<!-- *ngFor="let soData of soDataList; let i = index" -->
+ <div  style="margin-left: -24px; margin-top: -54px"> 
+    <!-- <p-accordion #pAccordion class="pc-search-accordion">
+        <p-accordionTab selected="true">
+
+          <p-header>
+                <ng-container i18n="@@SO.TITLE.STORING_ORDER">EMPTY</ng-container>
+            </p-header> -->
+               <!-- <div class="ui-fluid">
+                <div class="ui-g-12" style="margin-bottom: -10px;">
+                    <div class="ui-g-12 ui-md-3">
+                        <label class="pc-f-label" i18n="@@SO.LABEL.VESSEL">Berthing Time</label>
+                    </div>
+                    <div class="ui-g-12 ui-md-3">
+                        <label class="pc-f-label" i18n="@@SO.LABEL.VESSEL" style="float: left; font-weight: 100;">01-01-2019 17:00</label>
+                    </div>
+                    <div class="ui-g-12 ui-md-3">
+                        <label class="pc-f-label" i18n="@@SO.LABEL.VESSEL">Completion of Discharge</label>
+                    </div>
+                    <div class="ui-g-12 ui-md-3">
+                        <label class="pc-f-label" i18n="@@SO.LABEL.VESSEL" style="float: left; font-weight: 100;">02-01-2019 18:00</label>
+                    </div>
+                </div>
+                <div class="ui-g-12" style="margin-bottom: -10px;">
+                    <div class="ui-g-12 ui-md-3">
+                        <label class="pc-f-label" i18n="@@SO.LABEL.VESSEL">Port</label>
+                    </div>
+                    <div class="ui-g-12 ui-md-3">
+                        <label class="pc-f-label" i18n="@@SO.LABEL.VESSEL" style="float: left; font-weight: 100;">SGSIN</label>
+                    </div>
+                    <div class="ui-g-12 ui-md-3">
+                        <label class="pc-f-label" i18n="@@SO.LABEL.VESSEL">Terminal</label>
+                    </div>
+                    <div class="ui-g-12 ui-md-3">
+                        <label class="pc-f-label" i18n="@@SO.LABEL.VESSEL" style="float: left; font-weight: 100;">PPT</label>
+                    </div>
+                </div>
+
+            </div>  -->
+            <!-- *ngIf="showNoRecords" -->
+            <p-panel class="pc-title-panel" [style]="{'margin-left': '15px'}">
+                <p-dataTable class="pc-datatable" [value]="soDataList" dataKey="soId" [paginator]="true"  [rows]="10" [rowsPerPageOptions]="[5,10,20]" expandableRows="true"
+                    expandedIcon="ui-icon-expand-less" collapsedIcon="ui-icon-expand-more" [expandedRows]="expandedItems">
+                        <p-column expander="true" [style]="{'width':'3%'}"></p-column>
+                        <!-- <p-column [style]="{'width':'4%'}"  selectionMode="multiple"></p-column> -->
+
+                        <p-column [style]="{'width':'4%'}">
+                            <ng-template pTemplate="header">
+                              <p-checkbox class="pc-f-checkbox pc-f-checkbox-left" name="groupnameHeader" value="all" (onChange)="toggleCheckboxAll($event)"
+                                [(ngModel)]="selectedCntrNArray" [ngModelOptions]="{standalone: true}">
+                              </p-checkbox>
+                            </ng-template>
+                            <ng-template let-rowData="rowData" pTemplate="body">
+                              <p-checkbox class="pc-f-checkbox"  name="groupname" value="{{rowData.soId}}" [(ngModel)]="selectedCntrNArray" [ngModelOptions]="{standalone: true}"
+                                (onChange)="toggleCheckbox($event, rowData)">
+                              </p-checkbox>
+                            </ng-template>
+                        </p-column>   
+
+                        <p-column field="vsIM" i18n-header="@@SO_TABLE.LABEL.VESSEL" header="Vessel" [style]="{'width':'14%'}">
+                                <ng-template let-rowData="rowData" pTemplate="body">
+                                  {{rowData.vsIM | stringConverter}}
+                                </ng-template>
+                        </p-column>
+                        <p-column field="authorisationSlipX"  sortable="custom" (sortFunction)="customSort($event)" i18n-header="@@SO_TABLE.LABEL.AUTH_NO" header="Auth No" [style]="{'width':'12%'}">
+                            <ng-template let-rowData="rowData" pTemplate="body">
+                                <ng-container *ngIf="rowData['authorisationSlipX']">
+                                    <ng-container *ngIf="accessControl['updateAllowed']">
+                                        <a style="color:#F5A623;cursor:pointer" [routerLinkActive]="['active']" (click)="_doUpdateSOByAuth(rowData['authorisationSlipX'],rowData['vsIM'])"> {{rowData.authorisationSlipX | stringConverter}}</a>
+                                    </ng-container>
+                                    <ng-container *ngIf="!accessControl['updateAllowed']">
+                                            {{rowData.authorisationSlipX | stringConverter}}
+                                    </ng-container>
+                                </ng-container>        
+                                <ng-container *ngIf="!rowData['authorisationSlipX']">-</ng-container>
+                            </ng-template>
+                        </p-column>
+                        <p-column field="cntrN" sortable="custom" (sortFunction)="customSort($event)" i18n-header="@@SO_TABLE.LABEL.CNTR_NO" header="Cntr No" [style]="{'width':'13%'}">
+                                <ng-template let-rowData="rowData" pTemplate="body">
+                                    <ng-container *ngIf="rowData['cntrN']">
+                                        <ng-container *ngIf="accessControl['updateAllowed']">
+                                          <a style="color:#F5A623;cursor:pointer" [routerLinkActive]="['active']" (click)="_doUpdateSOByCntr(rowData['cntrN'], rowData['authorisationSlipX'],rowData['vsIM'],rowData['cntrOprC'])"> {{rowData.cntrN}}</a>
+                                        </ng-container>
+                                        <ng-container *ngIf="!accessControl['updateAllowed']">
+                                                {{rowData.cntrN | stringConverter}}
+                                        </ng-container>
+                                    </ng-container>
+                                </ng-template>
+                        </p-column>
+                        <p-column field="mtContainer" i18n-header="@@SO_TABLE.LABEL.CNTR_SZ" header="Cntr Sz" [style]="{'width':'8%'}">
+                                <ng-template let-rowData="rowData" pTemplate="body">
+                                        <ng-container *ngIf="rowData.mtContainer">
+                                                <!-- {{rowData.mtContainer.lengthQ | cntSizeConverter}} -->
+
+                                                <span [ngSwitch]="rowData.mtContainer?.lengthQ">
+                                                    <span *ngSwitchCase="">-</span>
+                                                    <span *ngSwitchCase="20">
+                                                        <ng-container >20FT</ng-container>
+                                                    </span>
+                                                    <span *ngSwitchCase="40">
+                                                        <ng-container >40FT</ng-container>
+                                                    </span>
+                                                    <span *ngSwitchCase="45">
+                                                        <ng-container>45FT</ng-container>
+                                                    </span>
+                                                    <span *ngSwitchCase="48">
+                                                        <ng-container>48FT</ng-container>
+                                                    </span>
+                                                    <span *ngSwitchCase="00">
+                                                        <ng-container>-</ng-container>
+                                                    </span>
+                                                    <!-- <span *ngSwitchCase="00">
+                                                            <ng-container>UC</ng-container>
+                                                    </span> -->
+                                                    <span *ngSwitchCase="99">
+                                                        <ng-container >TEU</ng-container>
+                                                    </span>                            
+                                                </span>
+                                        </ng-container>
+                                        <ng-container *ngIf="!rowData.mtContainer">
+                                               -
+                                        </ng-container>
+                                </ng-template>
+                        </p-column>
+                        <p-column field="mtContainer" i18n-header="@@SO_TABLE.LABEL.CNTR_TY" header="Cntr Ty" [style]="{'width':'8%'}">
+                                <ng-template let-rowData="rowData" pTemplate="body">
+                                        <ng-container *ngIf="rowData.mtContainer">
+                                                {{rowData.mtContainer.typeC | stringConverter}}
+                                        </ng-container>
+                                        <ng-container *ngIf="!rowData.mtContainer">
+                                               -
+                                        </ng-container>
+                                </ng-template>
+                        </p-column>
+                        <p-column field="mtContainer" i18n-header="@@SO_TABLE.LABEL.CNTR_HT" header="Cntr Ht" [style]="{'width':'8%'}">
+                                <ng-template let-rowData="rowData" pTemplate="body">
+                                        <ng-container *ngIf="rowData.mtContainer">
+                                                {{rowData.mtContainer.heightQ | stringConverter}}
+                                        </ng-container>
+                                        <ng-container *ngIf="!rowData.mtContainer">
+                                               -
+                                        </ng-container>
+                                </ng-template>
+                        </p-column>
+                        <p-column n field="statusC" i18n-header="@@SO_TABLE.LABEL.CNTR_STATUS" header="Cntr St" [style]="{'width':'8%'}">
+                                <ng-template pTemplate="body">
+                                    <div  i18n="@@SO_TABLE.LABEL.EMPTY">EMPTY</div>
+                                </ng-template>
+                        </p-column>
+                        <p-column field="cntrOprC" i18n-header="@@SO_TABLE.LABEL.CO" header="CO" [style]="{'width':'6%'}"></p-column>
+                        <p-column field="haulierOrgC" i18n-header="@@SO_TABLE.LABEL.HAULIER" header="Haulier" [style]="{'width':'8%'}">
+                                <ng-template let-rowData="rowData" pTemplate="body">
+                                  {{rowData.haulierOrgC | stringConverter}}
+                                </ng-template>
+                        </p-column>
+                        <p-column field="depotC" i18n-header="@@SO_TABLE.LABEL.DPT_CD" header="Depot Cd" [style]="{'width':'10%'}"></p-column>
+                        <p-column field="freePeriodN" i18n-header="@@SO.LABEL.FREE_PERIOD" header="Free Period" [style]="{'width':'10%'}">
+                                <ng-template let-rowData="rowData" pTemplate="body">
+                                   {{rowData.freePeriodN | stringConverter}}
+                                </ng-template>
+                        </p-column>
+                        <p-column field="expiryDt"  sortable="custom" (sortFunction)="customSortForDt($event)" i18n-header="@@SO_TABLE.LABEL.EXPIRY_DT" header="Expiry Dt" [style]="{'width':'12%'}">
+                                <ng-template let-rowData="rowData" pTemplate="body">
+                                  {{rowData.expiryDt | dateConverter}}
+                                </ng-template>
+                        </p-column>
+                        <p-column [style]="{'width':'3%'}">
+                            <div *ngIf="accessControl['deleteAllowed']">
+                                <ng-template pTemplate="header" let-rowData let-j="rowIndex">
+                                    <div style="float:right">
+                                        <span id="showSpan" class="fa ui-icon-more-vert ui-icon-button" i18n-pTooltip="@@COMMON.TOOLTIP.MENU" pTooltip="Operation Menu"
+                                             tooltipPosition="left" tooltipZIndex="99999" (click)="headerMenu.show($event); this.selectedIndex = i;this.selectedSOIndex=j;"
+                                            style="cursor: pointer">
+                                        </span>
+                                        <p-slideMenu class="pc-slidemenu" #headerMenu [model]="headerMenuItems" [popup]="true" [style]="{'height':'2.5em','z-index': '1'}"></p-slideMenu>
+                                    </div>
+                                </ng-template>
+                                <ng-template let-ele="rowData" let-j="rowIndex" pTemplate="body">
+                                    <span id="showSpan" class="fa ui-icon-more-vert ui-icon-button" i18n-pTooltip="@@COMMON.TOOLTIP.MENU" pTooltip="Operation"
+                                        tooltipPosition="left" tooltipZIndex="99999" (click)="bodyMenu.show($event); this.selectedIndex = i;this.selectedSOIndex=j;"
+                                        style="cursor: pointer">
+                                    </span>
+                                    <p-slideMenu class="pc-slidemenu" #bodyMenu [model]="bodyMenuItems" [popup]="true" [style]="{'height':'2.5em','z-index': '1'}"></p-slideMenu>
+                                </ng-template>
+                            </div>
+
+                            <div *ngIf="accessControl['surveyAllowed']">
+                                <ng-template pTemplate="header" let-rowData let-j="rowIndex">
+                                    <div style="float:right">
+                                        <span id="showSpan" class="fa ui-icon-more-vert ui-icon-button" i18n-pTooltip="@@COMMON.TOOLTIP.MENU" pTooltip="Operation Menu"
+                                             tooltipPosition="left" tooltipZIndex="99999" (click)="headerSurveyMenu.show($event); this.selectedIndex = i;this.selectedSOIndex=j;"
+                                            style="cursor: pointer">
+                                        </span>
+                                        <p-slideMenu class="pc-slidemenu" #headerSurveyMenu [model]="headerSurveyMenuItems" [popup]="true" [style]="{'height':'2.5em','z-index': '1'}"></p-slideMenu>
+                                    </div>
+                                </ng-template>
+                                <ng-template let-ele="rowData" let-j="rowIndex" pTemplate="body">
+                                    <span id="showSpan" class="fa ui-icon-more-vert ui-icon-button" i18n-pTooltip="@@COMMON.TOOLTIP.MENU" pTooltip="Operation"
+                                        tooltipPosition="left" tooltipZIndex="99999" (click)="bodySurveyMenu.show($event); this.selectedIndex = i;this.selectedSOIndex=j;"
+                                        style="cursor: pointer">
+                                    </span>
+                                    <p-slideMenu class="pc-slidemenu" #bodySurveyMenu [model]="bodySurveyMenuItems" [popup]="true" [style]="{'height':'2.5em','z-index': '1'}"></p-slideMenu>
+                                </ng-template>
+                            </div>
+                        </p-column>
+
+                        <ng-template let-rowData pTemplate="rowexpansion">
+                            <div class="ui-fluid">
+                                <h2 style="margin-left: 15px;" i18n="@@SO.LABEL.ORDER" >ORDER</h2>
+                                <div class="ui-g-12">
+                                    <div class="ui-g-12 ui-md-3">
+                                        <label class="pc-f-label" i18n="@@SO.LABEL.CONSIGNEE">Consignee</label>
+                                    </div>
+                                    <div class="ui-g-12 ui-md-3">
+                                        <label class="pc-f-label" style="float: left; font-weight: 100; display: contents;">{{rowData['consigneeM'] | stringConverter}}</label>
+                                    </div>
+                                    <div class="ui-g-12 ui-md-3">
+                                        <label class="pc-f-label" i18n="@@SO.LABEL.INSTRUCTION_TO_HAULIER">Instruction to Haulier</label>
+                                    </div>
+                                    <div class="ui-g-12 ui-md-3">
+                                        <label class="pc-f-label"  style="float: left; font-weight: 100; display: contents;">{{rowData['instructionToHaulierX'] | stringConverter}}</label>
+                                    </div>
+                                </div>
+                                <div class="ui-g-12">
+                                    <div class="ui-g-12 ui-md-3">
+                                        <label class="pc-f-label" i18n="@@SO.LABEL.EXIT_TIME">Exit Time</label>
+                                    </div>
+                                    <div class="ui-g-12 ui-md-3">
+                                        <label class="pc-f-label" style="float: left; font-weight: 100; display: contents;">{{rowData['exitDt'] | stringConverter}}</label> 
+                                    </div>
+                                    <div class="ui-g-12 ui-md-3">
+                                        <label class="pc-f-label" i18n="@@SO.LABEL.RETURN_TIME">Returned Time</label>
+                                    </div>
+                                    <div class="ui-g-12 ui-md-3">
+                                        <label class="pc-f-label" style="float: left; font-weight: 100; display: contents;">{{rowData['storedDt'] | stringConverter}}</label>
+                                    </div>
+                                </div>
+                                <div class="ui-g-12" style="margin-bottom: 10px;">
+                                    <div class="ui-g-12 ui-md-3">
+                                        <label class="pc-f-label" i18n="@@SO.LABEL.REMARK">Remarks</label>
+                                    </div>
+                                    <div class="ui-g-12 ui-md-3">
+                                        <label class="pc-f-label" style="float: left; font-weight: 100; display: contents;" *ngIf="rowData.mtContainer" >{{rowData['mtContainer'].remarksX | stringConverter}} </label>
+                                        <label class="pc-f-label" style="float: left; font-weight: 100; display: contents;" *ngIf="!rowData.mtContainer" >-</label>
+                                    </div>
+                                    <div class="ui-g-12 ui-md-3">
+                                        <label class="pc-f-label" i18n="@@SO.LABEL.SURVEY_REMARK">Survey Remarks</label>
+                                    </div>
+                                    <div class="ui-g-12 ui-md-3">
+                                        <label class="pc-f-label" style="float: left; font-weight: 100; display: contents;">{{rowData['depotRemarkX'] | stringConverter}}</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </ng-template>
+
+                         <!-- To display the No record found message -->
+                            <ng-template pTemplate="emptymessage">
+                                <ng-container *ngIf="!blocked && showNoRecords" i18n="@@SO.ERROR.MSG_NO_RECORDS_FOUND">No records found.</ng-container>
+                            </ng-template>
+                </p-dataTable>
+                <div class="rowsperpage"><ng-container i18n="@@COMMON.TITLE.ROWS_PER_PAGE">Rows per page </ng-container></div>
+            </p-panel>
+        <!-- </p-accordionTab>
+    </p-accordion> -->
+
+ </div> 
+
+
+<!-- --en -->
+
+<!-- <li *ngFor="let soData of soDataList; let index = index">
+
+   
+</li> -->
+<!-- 
+<p-accordion #pAccordion class="pc-search-accordion">
+    <p-accordionTab selected="true">
+        <p-header>
+            <ng-container i18n="@@SO.TITLE.STORING_ORDER">{soData.orgCode}STORING ORDER</ng-container>
+        </p-header>
+
+        <p-panel class="pc-title-panel">
+                <p-dataTable class="pc-datatable" [value]="soData.depotRegistryDetailList" dataKey="depotCode" [paginator]="false">
+                    <p-column [style]="{'width':'6%'}"  selectionMode="multiple"></p-column>
+                      <p-column field="depotCode" i18n-header="@@DEPOT_REGISTRY.TABLE.HEADER.DEPOT_CODE" header="Auth No" [style]="{'width':'8%'}"></p-column>
+                      <p-column field="depotName" i18n-header="@@DEPOT_REGISTRY.TABLE.HEADER.DEPOT_ORG_CODE" header="Cntr No" [style]="{'width':'8%'}"></p-column>
+                      <p-column field="optHrs" i18n-header="@@DEPOT_REGISTRY.TABLE.HEADER.DEPOT_OPERATOR" header="Cntr Sz" [style]="{'width':'8%'}"></p-column>
+                      <p-column field="address" i18n-header="@@DEPOT_REGISTRY.TABLE.HEADER.DEPOT_ORG_CODE" header="Cntr Ty" [style]="{'width':'8%'}"></p-column>
+                      <p-column field="portC" i18n-header="@@DEPOT_REGISTRY.TABLE.HEADER.DEPOT_OPERATOR" header="Cntr Ht" [style]="{'width':'8%'}"></p-column>
+                      <p-column field="terminal" i18n-header="@@DEPOT_REGISTRY.TABLE.HEADER.DEPOT_ORG_CODE" header="Cntr St" [style]="{'width':'8%'}"></p-column>
+                      <p-column field="exType" i18n-header="@@DEPOT_REGISTRY.TABLE.HEADER.DEPOT_OPERATOR" header="CO" [style]="{'width':'8%'}"></p-column>
+                      <p-column field="remarks" i18n-header="@@DEPOT_REGISTRY.TABLE.HEADER.DEPOT_ORG_CODE" header="Haulier" [style]="{'width':'8%'}"></p-column>
+                      <p-column field="startDt" i18n-header="@@DEPOT_REGISTRY.TABLE.HEADER.DEPOT_OPERATOR" header="Depot Cd" [style]="{'width':'8%'}"></p-column>
+                      <p-column field="endDt" i18n-header="@@DEPOT_REGISTRY.TABLE.HEADER.DEPOT_ORG_CODE" header="Free Period" [style]="{'width':'8%'}"></p-column>
+                      <p-column field="autoGenSO" i18n-header="@@DEPOT_REGISTRY.TABLE.HEADER.DEPOT_OPERATOR" header="Expiry Dt" [style]="{'width':'8%'}"></p-column>
+                  
+                  </p-dataTable>
+                </p-panel> 
+    </p-accordionTab>
+</p-accordion>
+ -->
+
+
+
+ <p-dialog [(visible)]="addSOSurveyInd" #pDailog [closable]="false" [modal]="true" class="pc-dialog pc-cust-dialog"
+ [resizable]="true" height="auto" [minWidth]="600" [minHeight]="800" [responsive]="true" > 
+ <!-- [minHeight]="600" [responsive]="true" [dismissableMask]="true" -->
+ <p-header>
+   <ng-container i18n="@@SO.SURVEY">SURVEY</ng-container>
+   
+ </p-header>
+ <div class="ui-fluid ui-g" [formGroup]="storingOrderSurveyDialogForm">
+   <div class="ui-g-12 ui-g-nopad">
+       <div class="ui-g-12" style="margin-bottom: -10px;">
+           <div class="ui-g-12 ui-md-5"  style="float: left; display: contents; word-break: break-word;">
+               {{surveySOCntrId}}
+           </div>
+       </div>
+     <div class="ui-g-12" style="margin-bottom: -10px;">
+       <div class="ui-g-12 ui-md-5">
+         <label class="pc-f-label-error" *ngIf="!storingOrderSurveyDialogForm.get('depotRemarkX').valid && storingOrderSurveyDialogForm.get('depotRemarkX').dirty"
+           i18n="@@SO.LABEL.SURVEY_REMARKS">Survey Remarks*</label>
+         <label class="pc-f-label" *ngIf="storingOrderSurveyDialogForm.get('depotRemarkX').valid || !storingOrderSurveyDialogForm.get('depotRemarkX').dirty"
+           i18n="@@SO.LABEL.SURVEY_REMARKS">Survey Remarks*</label>
+       </div>
+       <div class="ui-g-12 ui-md-6">
+         <textarea id="input"  class="pc-input-tb-freeze" [rows]="2" maxlength="300" type="text" pInputText formControlName="depotRemarkX" maxlength="300" pInputTextarea></textarea>
+         <div *ngIf="!storingOrderSurveyDialogForm.get('depotRemarkX').valid && storingOrderSurveyDialogForm.get('depotRemarkX').dirty">
+           <div class="pc-inline-msg" *ngIf="storingOrderSurveyDialogForm.get('depotRemarkX').errors.required " i18n="@@SO.ERROR.SURVEY_REMARKS_EMPTY">
+            Survey Remarks cannot be empty.</div>
+           </div>
+       </div>
+     </div>
+  </div>  
+ </div>
+
+ <p-footer>
+   <button pButton type="button" class="pc-f-sec-btn pc-f-sec-btn-cust" i18n-label="@@COMMON.BUTTON.CANCEL" label="CANCEL" (click)="doCancelSOSurveyAction()"></button>
+   <button pButton type="button" [disabled]="!storingOrderSurveyDialogForm.valid" class="pc-f-pri-btn pc-f-pri-btn-cust pc-f-small-btn" i18n-label="@@COMMON.BUTTON.SAVE" label="SAVE"
+     (click)="doSaveSOSurveyAction()"></button>
+ </p-footer>
+</p-dialog>

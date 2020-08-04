@@ -1,0 +1,14 @@
+:host ::ng-deep iframe {
+    height:600px !important;
+}
+
+.footer-space {
+    opacity: 0;
+    margin-bottom: 400px;
+    height:300px;
+  }
+
+  :host ::ng-deep  .ui-datatable-emptymessage {
+  visibility: hidden !important;
+
+  }

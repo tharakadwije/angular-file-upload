@@ -1,0 +1,135 @@
+<br/>
+<pc-dialog type="DELETION" [title]="soDeletionDialog_title" [items]="soDeletionDialog_items" [suggestion]="soDeletionDialog_suggestion"
+  [isDisplayItems]="soDeletionDialog_isDisplayItems" [display]="soDeletionDialog_isDisplay" (onClickYes)="_doDelete($event)"
+  (onClickNo)="_doCloseDialog($event)" [locale]="locale">
+</pc-dialog>
+<p-messages class="pc-messages" id="topTitle" [(value)]="messages" *ngIf="messages?.length > 0"></p-messages>
+<div id="topTitle">
+  <loading-field [loading]="isLoading"></loading-field>
+</div>
+<p-blockUI [blocked]="blocked" [target]="mainContent">
+  <p-progressSpinner class="pc-progressSpinner"></p-progressSpinner>
+</p-blockUI>
+<div style="position: relative; margin-left: auto; margin-right: auto; width: 68.571em;">
+  <p-growl class="pc-success-growl" [(value)]="successMessages" *ngIf="successMessages?.length > 0"></p-growl>
+</div>
+
+<div>
+    <p-accordion #pAccordion class="pc-search-accordion">
+      <p-accordionTab selected="true" >
+        <p-header>
+          <ng-container i18n="@@SO.TITLE.STORING_ORDER">STORING ORDER</ng-container>
+          <ng-container *ngIf="accessControl['createAllowed']">
+            <button *ngIf="accessControl['createAllowed']" pButton class="pc-f-accordion-btn" type="button" i18n-label="@@COMMON.BUTTON.CREATE" label="CREATE" style="margin-right:15px; "
+            (click)="doCreateAction()"></button>
+          </ng-container>
+        </p-header>
+        <p-panel class="pc-search-panel">
+          <div class="ui-fluid ui-g" [formGroup]="soSearchForm">
+            <div class="ui-g-12" style="margin-left: -70px;margin-bottom: -10px;">
+              <div class="ui-g-12 ui-md-3">
+                <label class="pc-f-label" *ngIf="_getDiscBaId.valid || !_getDiscBaId.dirty" i18n="@@SO.LABEL.VESSEL">Vessel</label>
+                <label class="pc-f-label-error" *ngIf="!_getDiscBaId.valid && _getDiscBaId.dirty"
+                  i18n="@@SO.LABEL.VESSEL">Vessel</label>
+              </div>
+              <div class="ui-g-12 ui-md-4">
+                <!-- <pc-auto-complete #vslVoyAcComp class="pc-f-autocomplete pc-f-autocomplete-normal" 
+                    configMode="VSS_VSLVOY" mainUrl="{{ domain }}" maxDropdown="5" formControlName="discBaId"
+                    custFilterStr="vslM,localVslM,inVoyN,outVoyN" [custVslFilter]=true filterMode="FILTER_BY_FIELD" 
+                    keysSuggestionDisplay="vslM,localVslM,inVoyN,outVoyN" keysFieldDisplay="vslM,localVslM,inVoyN,outVoyN" [hint]="vssAcHint" >
+                </pc-auto-complete> -->
+                
+                <pc-auto-complete #vslVoyAcComp class="pc-f-autocomplete pc-f-autocomplete-normal" [maxlength]="80"
+                  configMode="VSLVOY" mainUrl="{{ domain }}" maxDropdown="5" formControlName="discBaId"
+                  custFilterStr="vslM,localVslM,inVoyN,outVoyN" [custVslFilter]=true filterMode="FILTER_BY_FIELD" 
+                  keysSuggestionDisplay="vslM,localVslM,inVoyN,outVoyN" keysFieldDisplay="vslM,localVslM,inVoyN,outVoyN" (itemSelectedChange)="vesselSelected($event)" [hint]="hintVslVoy" >
+                </pc-auto-complete>
+
+                <!-- <pc-auto-complete class="pc-f-autocomplete" #vslVoyAcComp configMode="VSLVOY" [maxlength]="80"
+                [mainUrl]="mainUrl" custFilterStr="vslM,inVoyN,outVoyN,portC,terminalC" filterMode="FILTER_BY_FIELD" keysSuggestionDisplay="vslM,outVoyN,portC,terminalC"
+                keysFieldDisplay="vslM,outVoyN,portC,terminalC" formControlName="vslVoyAc" [hint]="i18n._messages['HINT_VSLVOY_AC']"
+                (itemSelectedChange)="vesselSelected($event)" (onKeyUp)="_onKeyUpEvent($event)" [disabled]="form.get('vslVoyAc').disabled">
+            </pc-auto-complete>
+             -->
+                <div *ngIf="!_getDiscBaId.valid && _getDiscBaId.dirty">
+                  <div class="pc-inline-msg" i18n="@@SO.ERROR.VESSEL_PATTEN">Please enter valid Vessel.</div>
+                </div>
+                <!-- <input class="pc-input-normal" type="text" pInputText formControlName="discBaId" maxlength="12" /> -->
+              </div>
+            </div>
+            <div class="ui-g-12" style="margin-left: -70px;margin-bottom: -10px;">
+              <div class="ui-g-12 ui-md-3">
+                <label class="pc-f-label" *ngIf="_getDepotC.valid || !_getDepotC.dirty" i18n="@@SO.LABEL.DEPOT_CODE">Depot Code</label>
+                <label class="pc-f-label-error" *ngIf="!_getDepotC.valid && _getDepotC.dirty" i18n="@@SO.DEPOT_CODE">Depot Code</label>
+              </div>
+              <div class="ui-g-12 ui-md-4">
+                <input class="pc-input-normal ui-inputtext" type="text" pInputText formControlName="depotC" />
+                <div *ngIf="!_getDepotC.valid && _getDepotC.dirty">
+                  <div class="pc-inline-msg" i18n="@@SO.ERROR.DEPOT_C_PATTEN">Please enter valid Depot Code.</div>
+                </div>
+              </div>
+            </div>
+            <div class="ui-g-12" style="margin-left: -70px;margin-bottom: -10px;">
+              <div class="ui-g-12 ui-md-3">
+                <label class="pc-f-label" *ngIf="_getAuthSlipX.valid || !_getAuthSlipX.dirty"
+                  i18n="@@SO.LABEL.AUTH_SLIP">Authorization Number</label>
+                <label class="pc-f-label-error" *ngIf="!_getAuthSlipX.valid && _getAuthSlipX.dirty"
+                  i18n="@@SO.LABEL.AUTH_SLIP">Authorization Number</label>
+              </div>
+              <div class="ui-g-12 ui-md-4">
+                <input class="pc-input-normal ui-inputtext" type="text" pInputText formControlName="authorisationSlipX" />
+                <div *ngIf="!_getAuthSlipX.valid && _getAuthSlipX.dirty">
+                  <div class="pc-inline-msg" i18n="@@SO.ERROR.AUTH_SLIP_PATTEN">Please enter valid Authorization Number.</div>
+                </div>
+              </div>
+            </div>
+            <div class="ui-g-12" style="margin-left: -70px;margin-bottom: -10px;">
+              <div class="ui-g-12 ui-md-3">
+                <label class="pc-f-label" *ngIf="_getCntrN.valid || !_getCntrN.dirty" i18n="@@SO.LABEL.CONTAINER_NUM">Container Number</label>
+                <label class="pc-f-label-error" *ngIf="!_getCntrN.valid && _getCntrN.dirty" i18n="@@SO.LABEL.CONTAINER_NUM">Container Number</label>
+              </div>
+              <div class="ui-g-12 ui-md-9">
+                <textarea class="pc-input-tb-freeze" style="width: 100%;" [rows]="2" [cols]="60" maxlength="170" formControlName="cntrN"
+                  pInputTextarea></textarea>
+                <div *ngIf="!_getCntrN.valid && _getCntrN.dirty">
+                  <div class="pc-inline-msg" i18n="@@SO.ERROR.CONTAINER_NUMBER_PATTEN">Please enter valid Container Number.</div>
+                </div>
+              </div>
+            </div>
+            <div class="ui-g-12" style="margin-left: -70px;margin-bottom: -10px;">
+              <div class="ui-g-12 ui-md-3">
+                <label class="pc-f-label" *ngIf="_getCntrOprC.valid || !_getCntrOprC.dirty" i18n="@@SO.LABEL.CONTAINER_OPR">Container Operator</label>
+                <label class="pc-f-label-error" *ngIf="!_getCntrOprC.valid && _getCntrOprC.dirty"
+                  i18n="@@SO.CONTAINER_OPR">Container Operator</label>
+              </div>
+              <div class="ui-g-12 ui-md-4">
+                  <pc-auto-complete #cntrOperatorAcComp configMode="OPERATOR" keysFieldDisplay="operatorC"
+                  maxDropdown="5" class="pc-f-autocomplete" formControlName="cntrOprC" mainUrl="{{ domain }}" [maxlength]="80" >
+              </pc-auto-complete>
+              <div *ngIf="!_getCntrOprC.valid && _getCntrOprC.dirty">
+                <div class="pc-inline-msg" i18n="@@SO.ERROR.CONTAINER_OPR_PATTEN">Please enter valid Container Operator.</div>
+              </div>
+                <!-- <input class="pc-input-normal" type="text" pInputText formControlName="cntrOprC" /> -->
+              </div>
+            </div>
+
+            <div class="ui-g-12">
+              <div class="ui-g-12 ui-md-11"></div>
+              <div class="ui-g-12 ui-md-1">
+                <button pButton class="pc-f-small-btn" type="button" i18n-label="@@COMMON.BUTTON.SEARCH" label="SEARCH" (click)="doSearchAction($event)"></button>
+              </div>
+            </div>
+          </div>
+        </p-panel> 
+
+      </p-accordionTab>
+    </p-accordion>
+
+</div>
+
+  <p-panel class="pc-title-panel" *ngIf="soDataList"> 
+    <app-search-view [soDataList]=soDataList [accessControl]=accessControl [soSearchData]=_getSOSearchData() (passErrorSearchComp)="passErrorSearchComp($event)" ></app-search-view>
+  </p-panel>
+
+
+  

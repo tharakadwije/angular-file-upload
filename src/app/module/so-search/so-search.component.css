@@ -1,0 +1,11 @@
+:host ::ng-deep .pc-search-accordion .ui-accordion {
+    width: auto !important;
+}
+
+:host ::ng-deep .pc-title-panel .ui-panel {
+    width: auto !important;
+}
+
+:host ::ng-deep .ui-panel-content-wrapper ng-trigger ng-trigger-panelContent{
+    margin-top:-31px;
+}

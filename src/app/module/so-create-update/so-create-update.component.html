@@ -1,0 +1,316 @@
+<pc-dialog type="DELETION" [title]="soDeletionDialog_title" [items]="soDeletionDialog_items" [suggestion]="soDeletionDialog_suggestion"
+  [isDisplayItems]="soDeletionDialog_isDisplayItems" [display]="soDeletionDialog_isDisplay" (onClickYes)="_doDelete($event)"
+  (onClickNo)="_doCloseDialog($event)" [locale]="locale">
+</pc-dialog>
+<p-messages class="pc-messages" id="topTitle" [(value)]="messages" *ngIf="messages?.length > 0"></p-messages>
+<div id="topTitle">
+  <loading-field [loading]="isLoading"></loading-field>
+</div>
+<p-blockUI [blocked]="blocked" [target]="mainContent">
+  <p-progressSpinner class="pc-progressSpinner"></p-progressSpinner>
+</p-blockUI>
+<div style="position: relative; margin-left: auto; margin-right: auto; width: 68.571em;">
+  <p-growl class="pc-success-growl" [(value)]="successMessages" *ngIf="successMessages?.length > 0"></p-growl>
+</div>
+<div [formGroup]="cgoBookingMainForm" >
+  <p-panel class="pc-top-title-panel ui-g">
+
+    <p-header>
+      <ng-container i18n="@@SO.TITLE.CARGO_BOOKING">CARGO BOOKING</ng-container>
+    </p-header>
+
+    <div class="ui-g-12 ui-g-nopad">
+      <div class="ui-g-12 ui-md-3">
+        <label class="pc-f-label" i18n="@@SO.LABEL.LOADER">Loader</label>
+      </div>
+      <div class="ui-g-12 ui-md-4">
+        <label class="pc-f-radio-label">{{ _getCgoStatus.value | stringConverter}} </label>
+      </div>
+      <div>
+        <div class="ui-g-12 ui-md-2">
+          <label class="pc-f-label" i18n="@@SO.LABEL.BERTH_TIME">Berthing Time</label>
+        </div>
+        <div class="ui-g-12 ui-md-3">
+          <label class="pc-f-radio-label">{{ _getBerthTime.value | stringConverter}} </label>
+        </div>
+      </div>
+    </div>
+    <div class="ui-g-12 ui-g-nopad">
+      <div class="ui-g-12 ui-md-3">
+        <label class="pc-f-label" i18n="@@SO.LABEL.BERTH_NO">Berth No</label>
+      </div>
+      <div class="ui-g-12 ui-md-4">
+        <label class="pc-f-radio-label">{{ _getBerthNo.value | stringConverter }}</label>
+      </div>
+      <div class="ui-g-12 ui-md-2">
+        <label class="pc-f-label" i18n="@@SO.LABEL.UNBERTH_TIME">Unberthing Time</label>
+      </div>
+      <div class="ui-g-12 ui-md-3">
+        <label class="pc-f-radio-label">{{ _getUnBerthTime.value | stringConverter }} </label>
+      </div>
+    </div>
+    <div class="ui-g-12 ui-g-nopad">
+      <div class="ui-g-12 ui-md-3">
+        <label class="pc-f-label" i18n="@@SO.LABEL.PORT">Port</label>
+      </div>
+      <div class="ui-g-12 ui-md-4">
+        <label class="pc-f-radio-label">{{ _getPort.value | stringConverter}} </label>
+      </div>
+      <div class="ui-g-12 ui-md-2">
+        <label class="pc-f-label" i18n="@@SO.LABEL.TERMINAL">Terminal</label>
+      </div>
+      <div class="ui-g-12 ui-md-3">
+        <label class="pc-f-radio-label">{{ _getTerminal.value | stringConverter }} </label>
+      </div>
+    </div>
+  </p-panel>
+
+
+  <div>
+    <p-accordion #pAccordion class="pc-search-accordion">
+      <p-accordionTab selected="true">
+        <p-header>
+          <div class="ui-g">
+            <div class="ui-g-8 ui-g-nopad">
+              <div class="ui-g">
+                <div class="ui-g-12 ui-md-4 ui-g-nopad">
+                  <label style="color: #ab081c" *ngIf="!_getUCRREF.valid && _getUCRREF.dirty" i18n="@@SO.LABEL.UCR_BOOKING_REF">UCR/BOOKING_REF*</label>
+                  <label *ngIf="_getUCRREF.valid || !_getUCRREF.dirty" i18n="@@SO.LABEL.UCR_BOOKING_REF">UCR/BOOKING_REF*</label>
+                </div>
+
+                <div class="ui-g-12 ui-md-4 ui-g-nopad" style=" margin-left: 10px; ">
+                  <input class="pc-input-accordion-header ui-inputtext" type="text" pInputText formControlName="ucr" maxlength="17" />
+                  <div *ngIf="!_getUCRREF.valid && _getUCRREF.dirty">
+                    <div class="pc-inline-msg-custom" *ngIf="_getUCRREF.errors.required" i18n="@@SO.ERROR.UCR_EMPTY">
+                      UCR/BOOKING_REF cannot be empty.</div>
+                    <div *ngIf="!_getUCRREF.errors.required">
+                      <div class="pc-inline-msg-custom" *ngIf="_getUCRREF.errors.pattern || _getUCRREF.errors.identitySpecialCharactersRevealed
+                                                                           || _getUCRREF.errors.whitespace" i18n="@@SO.ERROR.UCR_PATTEN">
+                        Please enter valid UCR/BOOKING_REF.</div>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+
+        </p-header>
+
+        <div class="ui-g ui-fluid">
+          <div class="ui-g-12 ui-g-nopad">
+
+            <div class="ui-g-12" style="margin-bottom: -10px;">
+              <div class="ui-g-12 ui-md-3">
+                <label class="pc-f-label" i18n="@@SO.LABEL.CGO_STATUS">Cargo Status</label>
+              </div>
+              <div class="ui-g-12 ui-md-4">
+                <input id="input" class="pc-input-normal ui-inputtext ui-g-nopad" type="text" pInputText formControlName="cgoStatus" maxlength="12"
+                />
+              </div>
+
+              <div class="ui-g-12 ui-md-2">
+                <label class="pc-f-label-error" *ngIf="!_getTrade.valid && _getTrade.dirty" i18n="@@SO.LABEL.TRADE">Trade*</label>
+                <label class="pc-f-label" *ngIf="_getTrade.valid || !_getTrade.dirty" i18n="@@SO.LABEL.TRADE">Trade*</label>
+              </div>
+              <div class="ui-g-12 ui-md-3">
+                <input id="input" class="pc-input-normal ui-inputtext ui-g-nopad" type="text" pInputText formControlName="trade" maxlength="12"
+                />
+                <div *ngIf="!_getTrade.valid && _getTrade.dirty">
+                  <div class="pc-inline-msg" *ngIf="_getTrade.errors.required " i18n="@@SO.ERROR.TRADE_EMPTY">
+                    Trade cannot be empty.</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="ui-g-12" style="margin-bottom: -10px;">
+              <div class="ui-g-12 ui-md-3">
+                <label class="pc-f-label-error" *ngIf="!_getCgoType.valid && _getCgoType.dirty" i18n="@@SO.LABEL.CARGO_TYPE">Cargo Type*</label>
+                <label class="pc-f-label" *ngIf="_getCgoType.valid || !_getCgoType.dirty" i18n="@@SO.LABEL.CARGO_TYPE">Cargo Type*</label>
+              </div>
+              <div class="ui-g-12 ui-md-4">
+                <input id="input" class="pc-input-normal ui-inputtext ui-g-nopad" type="text" pInputText formControlName="cgoType" maxlength="12"
+                />
+                <div *ngIf="!_getCgoType.valid && _getCgoType.dirty">
+                  <div class="pc-inline-msg" *ngIf="_getCgoType.errors.required " i18n="@@SO.ERROR.CARGO_TYPE_EMPTY">
+                    Cargo Type cannot be empty.</div>
+                </div>
+              </div>
+              <div class="ui-g-12 ui-md-2">
+                <label class="pc-f-label" i18n="@@SO.LABEL.DCL_COMPANY">Declarant Company</label>
+              </div>
+              <div class="ui-g-12 ui-md-3">
+                <input id="input" class="pc-input-normal ui-inputtext ui-g-nopad" type="text" pInputText formControlName="dcl_company" maxlength="12"
+                />
+              </div>
+            </div>
+
+            <div class="ui-g-12" style="margin-bottom: -10px;">
+              <div class="ui-g-12 ui-md-3">
+                <label class="pc-f-label-error" *ngIf="!_getQuantity.valid && _getQuantity.dirty" i18n="@@SO.LABEL.QUANTITY">Quantity*</label>
+                <label class="pc-f-label" *ngIf="_getQuantity.valid || !_getQuantity.dirty" i18n="@@SO.LABEL.QUANTITY">Quantity*</label>
+              </div>
+              <div class="ui-g-12 ui-md-4">
+                <input id="input" class="pc-input-normal ui-inputtext ui-g-nopad" type="text" pInputText formControlName="quantity" placeholder="0.00" maxlength="12"
+                />
+                <div *ngIf="!_getQuantity.valid && _getQuantity.dirty">
+                  <div class="pc-inline-msg" *ngIf="_getQuantity.errors.required " i18n="@@SO.ERROR.QUANTITY_EMPTY">
+                    Quantity cannot be empty.</div>
+                </div>
+              </div>
+              <div class="ui-g-12 ui-md-2">
+                <label class="pc-f-label" i18n="@@SO.LABEL.VARIANCE">Variance(%)</label>
+              </div>
+              <div class="ui-g-12 ui-md-3">
+                <input id="input" class="pc-input-normal ui-inputtext ui-g-nopad" type="text" pInputText formControlName="quantity_variance"
+                  maxlength="12" />
+              </div>
+            </div>
+
+            <div class="ui-g-12" style="margin-bottom: -10px;">
+              <div class="ui-g-12 ui-md-3">
+                <label class="pc-f-label" *ngIf="_getWeight.valid || !_getWeight.dirty" i18n="@@SO.LABEL.WEIGHT">Weight(kg)*</label>
+              </div>
+              <div class="ui-g-12 ui-md-4">
+                <input id="input" class="pc-input-normal ui-inputtext ui-g-nopad" type="text" pInputText formControlName="weight" maxlength="12"
+                />
+                <div *ngIf="!_getWeight.valid && _getWeight.dirty">
+                  <div class="pc-inline-msg" *ngIf="_getQuantity.errors.required " i18n="@@SO.ERROR.WEIGHT_EMPTY">
+                    Weight(kg) cannot be empty.</div>
+                </div>
+              </div>
+              <div class="ui-g-12 ui-md-2">
+                <label class="pc-f-label" i18n="@@SO.LABEL.VARIANCE">Variance(%)</label>
+              </div>
+              <div class="ui-g-12 ui-md-3">
+                <input id="input" class="pc-input-normal ui-inputtext ui-g-nopad" type="text" pInputText formControlName="weight_variance"
+                  maxlength="12" />
+              </div>
+            </div>
+
+            <div class="ui-g-12" style="margin-bottom: -10px;">
+              <div class="ui-g-12 ui-md-3">
+                <label class="pc-f-label-error" *ngIf="!_getMeasurement.valid && _getMeasurement.dirty" i18n="@@SO.LABEL.MEASUREMENT">Measurement(m3)*</label>
+                <label class="pc-f-label" *ngIf="_getMeasurement.valid || !_getMeasurement.dirty" i18n="@@SO.LABEL.MEASUREMENT">Measurement(m3)*</label>
+              </div>
+              <div class="ui-g-12 ui-md-4">
+                <input id="input" class="pc-input-normal ui-inputtext ui-g-nopad" type="text" pInputText formControlName="measurement" maxlength="12"
+                />
+                <div *ngIf="!_getMeasurement.valid && _getMeasurement.dirty">
+                  <div class="pc-inline-msg" *ngIf="_getMeasurement.errors.required " i18n="@@SO.ERROR.MEASUREMENT_EMPTY">
+                    Measurement(m3) cannot be empty.</div>
+                </div>
+              </div>
+              <div class="ui-g-12 ui-md-2">
+                <label class="pc-f-label" i18n="@@SO.LABEL.VARIANCE">Variance(%)</label>
+              </div>
+              <div class="ui-g-12 ui-md-3">
+                <input id="input" class="pc-input-normal ui-inputtext ui-g-nopad" type="text" pInputText formControlName="measurement_variance"
+                  maxlength="12" />
+              </div>
+            </div>
+
+            <div class="ui-g-12" style="margin-bottom: -10px;">
+              <div class="ui-g-12 ui-md-3">
+                <label class="pc-f-label" i18n="@@SO.LABEL.PORT_OF_DISCHARGE">Port of Discharge</label>
+              </div>
+              <div class="ui-g-12 ui-md-4">
+                <input id="input" class="pc-input-normal ui-inputtext ui-g-nopad" type="text" pInputText formControlName="port_of_discharge"
+                  maxlength="12" />
+              </div>
+              <div class="ui-g-12 ui-md-2">
+                <label class="pc-f-label" i18n="@@SO.LABEL.DESTINATION">Destination</label>
+              </div>
+              <div class="ui-g-12 ui-md-3">
+                <input id="input" class="pc-input-normal ui-inputtext ui-g-nopad" type="text" pInputText formControlName="port_of_destination"
+                  maxlength="12" />
+              </div>
+            </div>
+
+
+            <div class="ui-g-12" style="margin-bottom: -10px;">
+              <div class="ui-g-12 ui-md-3">
+                <label class="pc-f-label" i18n="@@SO.LABEL.CGO_OPERATOR">Cargo Operator</label>
+              </div>
+              <div class="ui-g-12 ui-md-4">
+                <pc-auto-complete #cgoOperatorAcComp configMode="OPERATOR" keysFieldDisplay="operatorC" maxDropdown="5" class="pc-f-autocomplete"
+                  formControlName="cgo_opr" mainUrl="{{ domain }}" [maxlength]="80">
+                </pc-auto-complete>
+              </div>
+
+              <div class="ui-g-12 ui-md-2">
+                <label class="pc-f-label" i18n="@@SO.LABEL.CNTR_OPERATOR">Container Operator</label>
+              </div>
+              <div class="ui-g-12 ui-md-3">
+                <pc-auto-complete #cntrOperatorAcComp configMode="OPERATOR" keysFieldDisplay="operatorC" maxDropdown="5" class="pc-f-autocomplete"
+                  formControlName="cntr_opr" mainUrl="{{ domain }}" [maxlength]="80">
+                </pc-auto-complete>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <hr class="pc-f-hr-inner">
+
+        <div class="ui-g ui-fluid">
+          <div class="ui-g-12 ui-g-nopad">
+
+            <div class="ui-g-12 ui-sm-12">
+              <span class="pc-f-title-header" i18n="@@SO.TITLE.SHIPPER">Shipper</span>
+            </div>
+
+            <div class="ui-g-12" style="margin-bottom: -10px;">
+              <div class="ui-g-12 ui-md-3">
+                <label class="pc-f-label" i18n="@@SO.LABEL.SHIPPER_COMPANY_ID">Company Id</label>
+              </div>
+              <div class="ui-g-12 ui-md-4">
+                <input id="input" class="pc-input-normal ui-inputtext ui-g-nopad" type="text" pInputText formControlName="shipper_company" maxlength="12"
+                />
+              </div>
+
+              <div class="ui-g-12 ui-md-2">
+                <label class="pc-f-label" i18n="@@SO.LABEL.SHIPPER_COMPANY_NAME">Name</label>
+              </div>
+              <div class="ui-g-12 ui-md-3">
+                <input id="input" class="pc-input-normal ui-inputtext ui-g-nopad" type="text" pInputText formControlName="shipper_company_name" maxlength="12"
+                />
+              </div>
+            </div>
+
+            <div class="ui-g-12" style="margin-bottom: -10px;">
+                <div class="ui-g-12 ui-md-3">
+                  <label class="pc-f-label" i18n="@@SO.LABEL.SHIPPER_ADDRESS">Address</label>
+                </div>
+                <div class="ui-g-12 ui-md-4">
+                    <textarea class="pc-input-tb-freeze ui-inputtext ui-g-nopad" [rows]="3" maxlength="85" formControlName="shipper_company_address" pInputTextarea></textarea>
+                </div>
+              </div>
+
+          </div>
+        </div>
+
+
+      </p-accordionTab>
+    </p-accordion>
+
+
+  
+  </div>
+
+  <p-panel *ngIf="!hasInitError" class="pc-no-title-panel ui-g" [style]="{'margin-top':'0em'}">
+      <div class="ui-g-12 right-aligned ui-sm-12">
+        <button pButton type="button" class="pc-f-sec-btn" i18n-label="@@BUTTON.BACK" label="BACK" (click)="onClickBack()"></button>
+        <button pButton type="button" class="pc-f-pri-btn" style="width:5em;" i18n-label="@@BUTTON.SAVE" label="SAVE" (click)="saveBKG()"></button>
+      </div>
+  </p-panel>
+  
+  <p-panel *ngIf="hasInitError" class="pc-no-title-panel  ui-g" [style]="{'margin-top':'0em'}">
+    <div class="ui-g">
+      <div class="ui-g-12 right-aligned ui-sm-12">
+        <button pButton type="button" class="pc-f-sec-btn" i18n-label="@@BUTTON.BACK" label="BACK" (click)="onClickBack()"></button>
+      </div>
+    </div>
+  </p-panel>
+
+</div>

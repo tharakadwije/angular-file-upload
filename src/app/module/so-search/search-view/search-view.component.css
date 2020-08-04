@@ -1,0 +1,8 @@
+:host ::ng-deep .ui-panel-titlebar{
+    margin-top: -1.714em !important;
+}
+
+:host ::ng-deep .pc-dialog .ui-dialog .ui-dialog-content{
+    min-height: 9.5em !important;
+    
+}
